@@ -58,7 +58,8 @@ CHAT_LANG = 'English' # English // Chinese // more to come
 # Use '/' in model path, instead of '\'
 # Use convert_model.py to convert a model for a strategy, for faster loading & saves CPU RAM 
 if CHAT_LANG == 'English':
-    args.MODEL_NAME = 'H:\LLM\RWKV\RWKV-4-Pile-7B-Instruct-test4-20230326.pth'
+    # args.MODEL_NAME = 'H:\LLM\RWKV\RWKV-4-Pile-7B-Instruct-test4-20230326.pth'
+    args.MODEL_NAME = 'H:\LLM\RWKV\RWKV-4-Pile-14B-20230313-ctx8192-test1050.pth'
     # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-14b/RWKV-4-Pile-14B-20230313-ctx8192-test1050'
     # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-7b/RWKV-4-Pile-7B-20230109-ctx4096'
     # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-3b/RWKV-4-Pile-3B-20221110-ctx4096'
