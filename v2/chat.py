@@ -54,52 +54,45 @@ os.environ["RWKV_CUDA_ON"] = '1' # '1' to compile CUDA kernel (10x faster), requ
 
 CHAT_LANG = 'English' # English // Chinese // more to come
 
-# Download RWKV-4 models from https://huggingface.co/BlinkDL (don't use Instruct-test models unless you use their prompt templates)
+# Download RWKV models from https://huggingface.co/BlinkDL
 # Use '/' in model path, instead of '\'
 # Use convert_model.py to convert a model for a strategy, for faster loading & saves CPU RAM
 if CHAT_LANG == 'English':
     # args.MODEL_NAME = 'H:\LLM\RWKV\RWKV-4-Pile-7B-Instruct-test4-20230326.pth'
     args.MODEL_NAME = "H:\LLM\RWKV\RWKV-4-Raven-14B-v7-EngAndMore-20230404-ctx4096.pth"
+    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-raven/RWKV-4-Raven-14B-v8-Eng-20230408-ctx4096'
+    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-raven/RWKV-4-Raven-7B-v8-Eng-20230408-ctx4096'
     # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-14b/RWKV-4-Pile-14B-20230313-ctx8192-test1050'
-    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-7b/RWKV-4-Pile-7B-20230109-ctx4096'
-    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-3b/RWKV-4-Pile-3B-20221110-ctx4096'
-    # args.MODEL_NAME = 'cuda_fp16_RWKV-4-Pile-7B-20230109-ctx4096' # use convert_model.py for faster loading & saves CPU RAM
-    # args.MODEL_NAME = 'fp16i8_and_fp16_RWKV-4-Pile-3B-20221110-ctx4096' # use convert_model.py for faster loading & saves CPU RAM
-    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-7b/RWKV-4-Pile-7B-Instruct-test4-20230326' # this is only suitable for +i instruct
 
-elif CHAT_LANG == 'Chinese': # testNovel系列是网文模型，请只用 +gen 指令续写。test5系列可以问答，推荐用 +i 做长问答（只用了小中文语料，纯属娱乐）
-    args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-7b/RWKV-4-Pile-7B-EngChn-testNovel-done-ctx2048-20230317'
-    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-3b/RWKV-4-Pile-3B-EngChn-testNovel-done-ctx2048-20230226'
-    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-1b5/RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225'
-    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-7b/RWKV-4-Pile-7B-EngChn-test5-20230326'
+elif CHAT_LANG == 'Chinese': # Raven系列可以对话和 +i 问答。Novel系列是小说模型，请只用 +gen 指令续写。
+    args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-raven/RWKV-4-Raven-7B-v7-ChnEng-20230404-ctx2048'
+    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-novel/RWKV-4-Novel-7B-v1-ChnEng-20230409-ctx4096'
 
-PILE_v2_MODEL = False
-# args.MODEL_NAME = '/fsx/BlinkDL/CODE/_PUBLIC_/RWKV-LM/RWKV-v4neo/RWKV-4-7B-alpaca-finetuned'
-# args.MODEL_NAME = '/fsx/BlinkDL/CODE/_PUBLIC_/RWKV-LM/RWKV-v4neo/7-run1x/rwkv-init'
-# args.MODEL_NAME = '/fsx/BlinkDL/CODE/_PUBLIC_/RWKV-LM/RWKV-v4neo/7-run1x/rwkv-final'
-# PILE_v2_MODEL = True # True False
-# args.MODEL_NAME = '/fsx/BlinkDL/CODE/_PUBLIC_/RWKV-LM/RWKV-v4neo/v2/1.5-run1/rwkv-601'
-# args.MODEL_NAME = '/fsx/BlinkDL/CODE/_PUBLIC_/RWKV-LM/RWKV-v4neo/v2/3-run1/rwkv-275'
+elif CHAT_LANG == 'Japanese':
+    args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-raven/RWKV-4-Raven-14B-v8-EngAndMore-20230408-ctx4096'
+    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-raven/RWKV-4-Raven-7B-v8-EngAndMore-20230408-ctx4096'
 
 # -1.py for [User & Bot] (Q&A) prompt
 # -2.py for [Bob & Alice] (chat) prompt
-# -3.py for a very long (but great) chat prompt (requires ctx8192, and set RWKV_CUDA_ON = 1 or it will be very slow)
 PROMPT_FILE = f'{current_path}/prompt/default/{CHAT_LANG}-2.py'
 
-args.ctx_len = 1024
 CHAT_LEN_SHORT = 40
 CHAT_LEN_LONG = 150
-FREE_GEN_LEN = 200
+FREE_GEN_LEN = 256
 
 # For better chat & QA quality: reduce temp, reduce top-p, increase repetition penalties
 # Explanation: https://platform.openai.com/docs/api-reference/parameter-details
-GEN_TEMP = 1.0 # sometimes it's a good idea to increase temp. try it
-GEN_TOP_P = 0.8
+GEN_TEMP = 1.1 # sometimes it's a good idea to increase temp. try it
+GEN_TOP_P = 0.7
 GEN_alpha_presence = 0.2 # Presence Penalty
 GEN_alpha_frequency = 0.2 # Frequency Penalty
 AVOID_REPEAT = '，：？！'
 
 CHUNK_LEN = 256 # split input into chunks to save VRAM (shorter -> slower)
+
+# args.MODEL_NAME = '/fsx/BlinkDL/CODE/_PUBLIC_/RWKV-LM/RWKV-v4neo/7-ENZH/rwkv-65'
+# args.MODEL_NAME = '/fsx/BlinkDL/CODE/_PUBLIC_/RWKV-LM/RWKV-v4neo/v2/1.5-run1/rwkv-601'
+# args.MODEL_NAME = '/fsx/BlinkDL/CODE/_PUBLIC_/RWKV-LM/RWKV-v4neo/v2/3-run1/rwkv-613'
 
 ########################################################################################################
 
@@ -107,29 +100,27 @@ print(f'\n{CHAT_LANG} - {args.strategy} - {PROMPT_FILE}')
 from rwkv.model import RWKV
 from rwkv.utils import PIPELINE
 
-with open(PROMPT_FILE, 'rb') as file:
-    user = None
-    bot = None
-    interface = None
-    init_prompt = None
-    exec(compile(file.read(), PROMPT_FILE, 'exec'))
-init_prompt = init_prompt.strip().split('\n')
-for c in range(len(init_prompt)):
-    init_prompt[c] = init_prompt[c].strip().strip('\u3000').strip('\r')
-init_prompt = '\n' + ('\n'.join(init_prompt)).strip() + '\n\n'
+def load_prompt(PROMPT_FILE):
+    variables = {}
+    with open(PROMPT_FILE, 'rb') as file:
+        exec(compile(file.read(), PROMPT_FILE, 'exec'), variables)
+    user, bot, interface, init_prompt = variables['user'], variables['bot'], variables['interface'], variables['init_prompt']
+    init_prompt = init_prompt.strip().split('\n')
+    for c in range(len(init_prompt)):
+        init_prompt[c] = init_prompt[c].strip().strip('\u3000').strip('\r')
+    init_prompt = '\n' + ('\n'.join(init_prompt)).strip() + '\n\n'
+    return user, bot, interface, init_prompt
 
 # Load Model
 
 print(f'Loading model - {args.MODEL_NAME}')
 model = RWKV(model=args.MODEL_NAME, strategy=args.strategy)
-if not PILE_v2_MODEL:
-    pipeline = PIPELINE(model, f"{current_path}/20B_tokenizer.json")
-    END_OF_TEXT = 0
-    END_OF_LINE = 187
-else:
-    pipeline = PIPELINE(model, "cl100k_base")
-    END_OF_TEXT = 100257
-    END_OF_LINE = 198
+pipeline = PIPELINE(model, f"{current_path}/20B_tokenizer.json")
+END_OF_TEXT = 0
+END_OF_LINE = 187
+# pipeline = PIPELINE(model, "cl100k_base")
+# END_OF_TEXT = 100257
+# END_OF_LINE = 198
 
 model_tokens = []
 model_state = None
@@ -179,6 +170,7 @@ def load_all_stat(srv, name):
 # Run inference
 print(f'\nRun prompt...')
 
+user, bot, interface, init_prompt = load_prompt(PROMPT_FILE)
 out = run_rnn(pipeline.encode(init_prompt))
 save_all_stat('', 'chat_init', out)
 gc.collect()
@@ -192,7 +184,7 @@ def reply_msg(msg):
     print(f'{bot}{interface} {msg}\n')
 
 def on_message(message):
-    global model_tokens, model_state
+    global model_tokens, model_state, user, bot, interface, init_prompt
 
     srv = 'dummy_server'
 
@@ -220,6 +212,20 @@ def on_message(message):
         save_all_stat(srv, 'chat', out)
         reply_msg("Chat reset.")
         return
+    
+    # use '+prompt {path}' to load a new prompt
+    elif msg[:8].lower() == '+prompt ':
+        print("Loading prompt...")
+        try:
+            PROMPT_FILE = msg[8:].strip()
+            user, bot, interface, init_prompt = load_prompt(PROMPT_FILE)
+            out = run_rnn(pipeline.encode(init_prompt))
+            save_all_stat(srv, 'chat', out)
+            print("Prompt set up.")
+            gc.collect()
+            torch.cuda.empty_cache()
+        except:
+            print("Path error.")
 
     elif msg[:5].lower() == '+gen ' or msg[:3].lower() == '+i ' or msg[:4].lower() == '+qa ' or msg[:4].lower() == '+qq ' or msg.lower() == '+++' or msg.lower() == '++':
 
@@ -337,7 +343,7 @@ Below is an instruction that describes a task. Write a response that appropriate
             elif i <= CHAT_LEN_LONG:
                 newline_adj = 0
             else:
-                newline_adj = min(2, (i - CHAT_LEN_LONG) * 0.25) # MUST END THE GENERATION
+                newline_adj = min(3, (i - CHAT_LEN_LONG) * 0.25) # MUST END THE GENERATION
 
             for n in occurrence:
                 out[n] -= (GEN_alpha_presence + occurrence[n] * GEN_alpha_frequency)
@@ -389,37 +395,46 @@ say something --> chat with bot. use \\n for new line.
 + --> alternate chat reply
 +reset --> reset chat
 
-+gen YOUR PROMPT --> free generation with any prompt. use \\n for new line.
-+qa YOUR QUESTION --> free generation - ask any question (just ask the question). use \\n for new line.
-+++ --> continue last free generation (only for +gen / +qa)
-++ --> retry last free generation (only for +gen / +qa)
++gen YOUR PROMPT --> free single-round generation with any prompt. use \\n for new line.
++i YOUR INSTRUCT --> free single-round generation with any instruct. use \\n for new line.
++++ --> continue last free generation (only for +gen / +i)
+++ --> retry last free generation (only for +gen / +i)
 
-Now talk with the bot and enjoy. Remember to +reset periodically to clean up the bot's memory. Use RWKV-4 14B for best results.
-This is not instruct-tuned for conversation yet, so don't expect good quality. Better use +gen for free generation.
-
-Prompt is VERY important. Try all prompts on https://github.com/BlinkDL/ChatRWKV first.
+Now talk with the bot and enjoy. Remember to +reset periodically to clean up the bot's memory. Use RWKV-4 14B (especially https://huggingface.co/BlinkDL/rwkv-4-raven) for best results.
 '''
-elif CHAT_LANG == 'Chinese':        
+elif CHAT_LANG == 'Chinese':
     HELP_MSG = f'''指令:
-直接输入内容 --> 和机器人聊天（建议问机器人问题），用\\n代表换行
+直接输入内容 --> 和机器人聊天（建议问机器人问题），用\\n代表换行，必须用 Raven 模型
 + --> 让机器人换个回答
 +reset --> 重置对话，请经常使用 +reset 重置机器人记忆
-+qa 某某问题 --> 问独立的问题（忽略上下文），用\\n代表换行
-+qq 某某问题 --> 问独立的问题（忽略上下文），且敞开想象力，用\\n代表换行
 
-注意，中文网文【testNovel】模型，更适合下列指令：
-+gen 某某内容 --> 续写任何中英文内容，用\\n代表换行
-+++ --> 继续 +gen / +qa / +qq 的回答
-++ --> 换个 +gen / +qa / +qq 的回答
++i 某某指令 --> 问独立的问题（忽略聊天上下文），用\\n代表换行，必须用 Raven 模型
++gen 某某内容 --> 续写内容（忽略聊天上下文），用\\n代表换行，写小说用 testNovel 模型
++++ --> 继续 +gen / +i 的回答
+++ --> 换个 +gen / +i 的回答
 
 作者：彭博 请关注我的知乎: https://zhuanlan.zhihu.com/p/603840957
 如果喜欢，请看我们的优质护眼灯: https://withablink.taobao.com
 
-中文网文【testNovel】模型，请先试这些续写例子：
+中文 Novel 模型，可以试这些续写例子（不适合 Raven 模型）：
 +gen “区区
 +gen 以下是不朽的科幻史诗长篇巨著，描写细腻，刻画了数百位个性鲜明的英雄和宏大的星际文明战争。\\n第一章
 +gen 这是一个修真世界，详细世界设定如下：\\n1.
 '''
+elif CHAT_LANG == 'Japanese':
+    HELP_MSG = f'''コマンド:
+直接入力 --> ボットとチャットする．改行には\\nを使用してください．
++ --> ボットに前回のチャットの内容を変更させる．
++reset --> 対話のリセット．メモリをリセットするために，+resetを定期的に実行してください．
+
++i インストラクトの入力 --> チャットの文脈を無視して独立した質問を行う．改行には\\nを使用してください．
++gen プロンプトの生成 --> チャットの文脈を無視して入力したプロンプトに続く文章を出力する．改行には\\nを使用してください．
++++ --> +gen / +i の出力の回答を続ける．
+++ --> +gen / +i の出力の再生成を行う.
+
+ボットとの会話を楽しんでください。また、定期的に+resetして、ボットのメモリをリセットすることを忘れないようにしてください。
+'''
+
 print(HELP_MSG)
 print(f'{CHAT_LANG} - {args.MODEL_NAME} - {args.strategy}')
 
