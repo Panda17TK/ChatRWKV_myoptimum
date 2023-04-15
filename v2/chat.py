@@ -52,14 +52,15 @@ args.strategy = 'cuda fp16i8 *10+'
 os.environ["RWKV_JIT_ON"] = '1' # '1' or '0', please use torch 1.13+ and benchmark speed
 os.environ["RWKV_CUDA_ON"] = '1' # '1' to compile CUDA kernel (10x faster), requires c++ compiler & cuda libraries
 
-CHAT_LANG = 'English' # English // Chinese // more to come
+
+CHAT_LANG = 'Japanese' # English // Chinese // more to come
 
 # Download RWKV models from https://huggingface.co/BlinkDL
 # Use '/' in model path, instead of '\'
 # Use convert_model.py to convert a model for a strategy, for faster loading & saves CPU RAM
 if CHAT_LANG == 'English':
     # args.MODEL_NAME = 'H:\LLM\RWKV\RWKV-4-Pile-7B-Instruct-test4-20230326.pth'
-    args.MODEL_NAME = "H:\LLM\RWKV\RWKV-4-Raven-14B-v7-EngAndMore-20230404-ctx4096.pth"
+    args.MODEL_NAME = "H:\LLM\RWKV\RWKV-4-Raven-14B-v9-Eng99-20230412-ctx8192.pth"
     # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-raven/RWKV-4-Raven-14B-v8-Eng-20230408-ctx4096'
     # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-raven/RWKV-4-Raven-7B-v8-Eng-20230408-ctx4096'
     # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-14b/RWKV-4-Pile-14B-20230313-ctx8192-test1050'
@@ -69,7 +70,7 @@ elif CHAT_LANG == 'Chinese': # Raven系列可以对话和 +i 问答。Novel系�
     # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-novel/RWKV-4-Novel-7B-v1-ChnEng-20230409-ctx4096'
 
 elif CHAT_LANG == 'Japanese':
-    args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-raven/RWKV-4-Raven-14B-v8-EngAndMore-20230408-ctx4096'
+    args.MODEL_NAME = "H:\LLM\RWKV\RWKV-4-Raven-14B-v8-Eng87-Jpn1-20230412-ctx4096.pth"
     # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-raven/RWKV-4-Raven-7B-v8-EngAndMore-20230408-ctx4096'
 
 # -1.py for [User & Bot] (Q&A) prompt
